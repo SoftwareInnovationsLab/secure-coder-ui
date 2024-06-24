@@ -22,7 +22,7 @@ function Exercise() {
 
   const handleSubmitCode = async () => {
     try {
-      const response = await fetch('http://localhost:5000/submit-code', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/submit-code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ function Exercise() {
   useEffect(() => {
     const fetchExercise = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/exercise/${exerciseId}`);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/exercise/${exerciseId}`);
         const data = await response.json();
         setExercise(data);
         setCode(data.libraryFunction);

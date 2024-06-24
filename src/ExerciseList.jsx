@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Col, Column, Container, ListGroup, Row } from 'react-bootstrap';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import { Badge, Col, Container, ListGroup, Row } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,9 +10,10 @@ function ExerciseList() {
     useEffect(() => {
         const fetchExercises = async () => {
             try {
-                const response = await fetch('http://localhost:5000/exercises');
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/exercises`);
                 const data = await response.json();
                 setExercises(data);
+                console.error(response);
             } catch (error) {
                 console.error('Error fetching exercises:', error);
             }
