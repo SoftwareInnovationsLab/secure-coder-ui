@@ -17,8 +17,7 @@ function Exercise() {
   const [code, setCode] = useState('');
   const language = useState('c');
   const [result, setResult] = useState(null); // Add state to store results
-  const [argv, setArgv] = useState('');
-  const [stdin, setStdin] = useState('');
+  const [input, setInput] = useState('');
 
   const handleSubmitCode = async () => {
     try {
@@ -27,7 +26,7 @@ function Exercise() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ exerciseId, code, language, argv, stdin }),
+        body: JSON.stringify({ exerciseId, code, language, input }),
       });
       const data = await response.json();
       setResult(data); // Update results
@@ -59,8 +58,8 @@ function Exercise() {
         const data = await response.json();
         setExercise(data);
         setCode(data.libraryFunction);
-        if (data.argv) {
-          setArgv(data.argv)
+        if (data.input) {
+          setInput(data.input)
         }
       } catch (error) {
         console.error('Error fetching exercise:', error);
@@ -72,11 +71,11 @@ function Exercise() {
 
   return (
     <Container>
-      <h1>Practice Safety and Security Debugging</h1>
+      <h1>{process.env.REACT_APP_TITLE}</h1>
       {exercise ? (
         <>
           <Breadcrumb>
-            <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+            <Breadcrumb.Item href={process.env.REACT_APP_ROOT}>Home</Breadcrumb.Item>
             <Breadcrumb.Item active>{exercise.category}</Breadcrumb.Item>
             <Breadcrumb.Item active>{exercise.title}</Breadcrumb.Item>
           </Breadcrumb>
@@ -87,7 +86,7 @@ function Exercise() {
             <BlueExercise code={code} setCode={setCode} />
           )}
           {exercise.type === 'offensive' && (
-            <RedExercise code={code} setCode={setCode} argv={argv} setArgv={setArgv} setStdin={setStdin} />
+            <RedExercise code={code} setCode={setCode} input={input} setInput={setInput} />
           )}
           <br></br>
           {result && (
@@ -153,7 +152,7 @@ function BlueExercise({ code, setCode }) {
   );
 }
 
-function RedExercise({ code, setCode, argv, setArgv, stdin, setStdin }) {
+function RedExercise({ code, setCode, input, setInput }) {
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -180,8 +179,8 @@ function RedExercise({ code, setCode, argv, setArgv, stdin, setStdin }) {
       <div>
         <textarea ref={editorRef} defaultValue={code} />
       </div>
-      Command line arguments (space delimeted):<br></br><input type="text" value={argv} onChange={(e) => setArgv(e.target.value)} placeholder="Enter command line arguments here..." /><br></br><br></br>
-      Standard input:<br></br><input type="text" onChange={(e) => setStdin(e.target.value)} placeholder="Enter standard input here..." /><br></br>
+      <br></br>
+      Input: <br></br><input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Enter inputs here..." /><br></br><br></br>
     </>
   );
 }
