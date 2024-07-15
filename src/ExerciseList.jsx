@@ -31,13 +31,13 @@ function ExerciseList() {
                         Welcome to {process.env.REACT_APP_TITLE}.
                         This site is designed to provide you with small debugging exercises that focus on safety/security-related bugs.
                         The exercises are categorized according to the common weakness enumeration (CWE) that they train.
-                        Additionally, each exercise is tagged as either <Badge bg="danger" pill>offensive</Badge> or <Badge bg="primary" pill>defensive</Badge>.
-                        The offensive exercises focus on crafting inputs that exploit or take advantage of the vulnerabilities whereas the defensive ones aim to patch or eliminate the bugs.
+                        Additionally, each exercise is tagged as either <Badge bg="danger" pill>attack</Badge> or <Badge bg="primary" pill>defend</Badge>.
+                        The attack exercises focus on crafting inputs that exploit or take advantage of the vulnerabilities whereas the defend ones aim to patch or eliminate the bugs.
                         For your convenience, each category contains links to additional training materials or resources.
                     </p>
                     <p>
                         Please select from the list of available exercises below.
-                        We request that you attempt both an offensive and defensive exercise from at least one of the categories.
+                        We request that you attempt both an attack and defend exercise from at least one of the categories.
                         However, if you feel so inclined, please feel free to attempt any or all of the others.
                     </p>
                 </Col>
@@ -67,7 +67,7 @@ function ExerciseList() {
                                                 <div className="ms-2 me-auto">
                                                     <Link to={`/exercise/${exercise.id}`}>{exercise.title}</Link>
                                                 </div>
-                                                <Badge bg="danger" pill>offensive</Badge>
+                                                <Badge bg="danger" pill>attack</Badge>
                                             </ListGroup.Item>
                                         ))}
                                         {exercises.filter(exercise => exercise.type === 'defensive').map((exercise) => (
@@ -75,7 +75,7 @@ function ExerciseList() {
                                                 <div className="ms-2 me-auto">
                                                     <Link to={`/exercise/${exercise.id}`}>{exercise.title}</Link>
                                                 </div>
-                                                <Badge bg="primary" pill>defensive</Badge>
+                                                <Badge bg="primary" pill>defend</Badge>
                                             </ListGroup.Item>
                                         ))}
                                     </ListGroup>
