@@ -4,9 +4,6 @@ import CodeMirror from 'codemirror';
 import DOMPurify from 'dompurify';
 import { Accordion, Alert, Container, Row, Col } from 'react-bootstrap';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import { Base64 } from 'js-base64';
-import { Link } from 'react-router-dom';
-import { supabase } from './supabaseClient';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/js/dist/collapse.js'
@@ -21,9 +18,6 @@ function Exercise() {
   const language = useState('c');
   const [result, setResult] = useState(null); // Add state to store results
   const [input, setInput] = useState('');
-  const [trackingId, setTrackingId] = useState(null);
-  const [submissionTimes, setSubmissionTimes] = useState([]);
-  const [submissionResults, setSubmissionResults] = useState([]);
 
   const handleSubmitCode = async () => {
     try {
@@ -33,81 +27,58 @@ function Exercise() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ exerciseId, code, language, input }),
+        
       });
-      
       const data = await response.json();
-      setResult(data);
-
-      if (trackingId) {
-        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
-        const isSuccess = data.status?.description === 'Accepted';
-        
-        const newSubmissionTimes = [...submissionTimes, currentTime];
-        const newSubmissionResults = [...submissionResults, isSuccess ? 'Success' : 'Try again'];
-        
-        setSubmissionTimes(newSubmissionTimes);
-        setSubmissionResults(newSubmissionResults);
-
-        // Update exercise tracking in Supabase
-        const { error: updateError } = await supabase
-          .from('exercise_tracking')
-          .update({
-            submission_times: newSubmissionTimes,
-            submission_results: newSubmissionResults
-          })
-          .eq('id', trackingId);
-
-        if (updateError) throw updateError;
-      }
+      setResult(data); // Update results
+      console.log(JSON.stringify(exercise));
     } catch (error) {
       console.error('Error submitting code:', error);
-      setResult({ error: 'Failed to submit code' });
+      setResult({ error: 'Failed to submit code' }); // Update with error
     }
   };
 
   const handleGetHints = async () => {
+  
     try {
-      // Log exercise start in Supabase
-      const { data, error } = await supabase
-        .from('exercise_tracking')
-        .insert([
-          {
-            user_name: 'Test User', // Replace with actual user name when auth is implemented
-            email: 'test@example.com', // Replace with actual email when auth is implemented
-            exercise_id: exerciseId,
-            start_time: new Date().toLocaleTimeString('en-US', { hour12: false }),
-            submission_times: [],
-            submission_results: []
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-      setTrackingId(data.id);
-
-      // Create a structured payload with all necessary information
-      const payload = {
-        action: "loadExercise",
-        exerciseId: exerciseId,
-        endpoint: "https://securecoder.lstlove.com/exercise",
-      };
-      
-      // Encode the payload to safely pass through URL
-      const encodedPayload = Base64.encodeURI(JSON.stringify(payload));
-      
-      // Construct the URL with the encoded initialization payload
-      const url = `${process.env.REACT_APP_AI_TUTOR_UI}/?init=${encodedPayload}`;
-      
-      // Open AI Tutor in new tab
-      const newTab = window.open(url, "_blank");
-      if (!newTab) throw new Error("Popup blocked");
-      
+      const res = await fetch(
+        `${process.env.REACT_APP_AI_TUTOR_URL}/api/security`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(exercise)
+        }
+      );
+      const data = await res.json();
+  
+      /* 👇 choose ONE of the UX choices: */
+  
+      // 1. Open the AI‑Tutor UI in a new tab with a session token
+      window.open(`${process.env.REACT_APP_AI_TUTOR_URL}/session/${data.session_id}`, "_blank");
+  
+      // 2. OR show the hints inline (quick modal)
+  
     } catch (err) {
-      console.error("Failed to launch AI Tutor:", err);
-      alert("Could not open AI Tutor. Please allow pop-ups and try again.");
+      console.error("AI‑Tutor request failed:", err);
+      alert("Could not fetch hints from the AI‑Tutor service.");
     }
   };
+  
+
+  const renderHints = () => (
+    <Accordion alwaysOpen>
+      {exercise.hints.map((hint, index) => (
+        <Accordion.Item eventKey={index.toString()} key={index}>
+          <Accordion.Header>
+            Hint {index + 1}
+          </Accordion.Header>
+          <Accordion.Body>
+            <p key={index}>{hint}</p>
+          </Accordion.Body>
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  )
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -133,9 +104,7 @@ function Exercise() {
       {exercise ? (
         <>
           <Breadcrumb>
-            <Breadcrumb.Item>
-              <Link to="/">Home</Link>
-            </Breadcrumb.Item>
+            <Breadcrumb.Item href={process.env.REACT_APP_ROOT}>Home</Breadcrumb.Item>
             <Breadcrumb.Item active>{exercise.category}</Breadcrumb.Item>
             <Breadcrumb.Item active>{exercise.title}</Breadcrumb.Item>
           </Breadcrumb>
@@ -169,15 +138,10 @@ function Exercise() {
               )}
             </>
           )}
-
-          <Row className="mt-2">
-            <Col>
-              <button type="button" className="btn btn-info me-2" onClick={handleGetHints}>
-                <i className="bi bi-lightbulb"></i> Get Help from AI Tutor
-              </button>
-              <button type="button" className="btn btn-primary ms-2" onClick={handleSubmitCode}>Submit</button>
-            </Col>
-          </Row>
+          {exercise.hints && renderHints()}
+          <br></br>
+          <button type="button" class="btn btn-primary" onClick={handleSubmitCode}>Submit</button>
+          <button variant="secondary"className="ms-2"onClick={handleGetHints}>Get Hints from AI Tutor</button>
 
         </>
       ) : (

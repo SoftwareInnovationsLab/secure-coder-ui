@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.74.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.3",
     "codemirror": "^5.65.16",
     "dompurify": "^3.1.5",
+    "js-base64": "^3.7.7",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",
     "react-codemirror2": "^8.0.0",
@@ -44,7 +46,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.1.1"
+    "gh-pages": "^6.3.0"
   },
-  "homepage": "http://SoftwareInnovationsLab.github.io/debugging-exercises"
+  "homepage": "http://SoftwareInnovationsLab.github.io/secure-coder-ui"
 }
