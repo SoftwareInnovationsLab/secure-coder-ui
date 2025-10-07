@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/secure-coder-ui/static/css/main.2dacb2e5.css",
+    "main.js": "/secure-coder-ui/static/js/main.f16a79aa.js",
+    "static/js/453.9d388d58.chunk.js": "/secure-coder-ui/static/js/453.9d388d58.chunk.js",
+    "index.html": "/secure-coder-ui/index.html",
+    "main.2dacb2e5.css.map": "/secure-coder-ui/static/css/main.2dacb2e5.css.map",
+    "main.f16a79aa.js.map": "/secure-coder-ui/static/js/main.f16a79aa.js.map",
+    "453.9d388d58.chunk.js.map": "/secure-coder-ui/static/js/453.9d388d58.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2dacb2e5.css",
+    "static/js/main.f16a79aa.js"
+  ]
+}
